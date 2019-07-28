@@ -81,7 +81,7 @@ Date: $(env TZ="$timezone" date)" "$finalzip_path"
 
         /home/vsts/work/1/s/telegram -M "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
 		
-Download: ["$zip_name".zip](https://github.com/"$release_repo"/releases/download/"$tag"/"$zip_name".zip)"
+Download : ["$zip_name".zip](buttonurl://https://github.com/"$release_repo"/releases/download/"$tag"/"$zip_name".zip)"
 
     else
         echo "Build failed in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds"
