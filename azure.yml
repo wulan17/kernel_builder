@@ -1,7 +1,7 @@
 variables:
-  TELEGRAM_TOKEN: "--Paste Your Here--"
-  TELEGRAM_CHAT: "--Paste Your Here--"
-  GITHUB_TOKEN: "--Paste Your Here--"
+  TELEGRAM_TOKEN: "--Paste TELEGRAM_TOKEN Your Here--"
+  TELEGRAM_CHAT: "--Paste TELEGRAM_CHAT Your Here--"
+  GITHUB_TOKEN: "--Paste GITHUB_TOKEN Your Here--"
   
 steps:
   - task: ShellScript@2

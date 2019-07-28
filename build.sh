@@ -13,7 +13,7 @@ chmod +x ~/bin/repo
 export PATH=~/bin:$PATH
 export USE_CCACHE=1
 sudo apt-get update
-sudo apt-get install openjdk-8-jdk android-tools-adb bc bison build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev
+sudo apt-get install liblz4-dev openjdk-8-jdk android-tools-adb bc bison build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev
 
 
 TELEGRAM_TOKEN=$(cat /tmp/tg_token)
@@ -28,25 +28,30 @@ out="out"
 
 cd /home/vsts/work/1/s/
 
-echo "Sync started for "$manifest_url""
-/home/vsts/work/1/s/telegram -M "Sync Started for ["$ROM"]("$manifest_url")"
+echo "Sync started"
+/home/vsts/work/1/s/telegram -M "Sync Started"
 SYNC_START=$(date +"%s")
-git clone https://github.com/wulan17/android_kernel_xiaomi_mt6765.git
-git clone https://github.com/wulan17/arm-linux-androideabi-4.9.git
+bash clone.sh
+chmod +x /home/vsts/work/1/s/arm-linux-androideabi-4.9/bin/*
+chmod +x /home/vsts/work/1/s/arm-linux-androideabi-4.9/arm-linux-androideabi/bin/*
+chmod +x /home/vsts/work/1/s/arm-linux-androideabi-4.9/libexec/gcc/arm-linux-androideabi/4.9.x/*
+chmod +x /home/vsts/work/1/s/arm-linux-androideabi-4.9/libexec/gcc/arm-linux-androideabi/4.9.x/plugin
 SYNC_END=$(date +"%s")
 SYNC_DIFF=$((SYNC_END - SYNC_START))
 if [ -e android_kernel_xiaomi_mt6765 ]; then
     echo "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
     echo "Build Started"
     /home/vsts/work/1/s/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
-	/home/vsts/work/1/s/telegram -M "Build Start
-	Dev = "$KBUILD_BUILD_USER"
-	Product = Kernel
-	Device ="$device"
-	Date = "$(env TZ="$timezone" date)""
+	/home/vsts/work/1/s/telegram -M "<b>Build Start</b>
+<b>Dev</b> : "$KBUILD_BUILD_USER"
+<b>Product</b> : Kernel
+<b>Device</b> : "$device"
+<b>Compiler</b> : "$(${GCC}gcc --version | head -n 1)"
+<b>Date</b> : "$(env TZ="$timezone" date)""
 
     BUILD_START=$(date +"%s")
-
+	# Set kernel source workspace
+	cd $BUILD
 	# Make and Clean
 	make clean
 	make mrproper
@@ -58,10 +63,10 @@ if [ -e android_kernel_xiaomi_mt6765 ]; then
     BUILD_DIFF=$((BUILD_END - BUILD_START))
 	cd /home/vsts/work/1/s/AnyKernel
 	cp $BUILD/out/arch/$ARCH/boot/zImage .
-	zip_name="kernel-"$device"-"date +%Y%m%d%H%M%S""
+	zip_name="kernel-"$device"-"$(env TZ="$timezone" date +%Y%m%d)"-"$(env TZ="$timezone" date +%I%M%S)""
+	export zip_name
 	zip -r $zip_name.zip ./*
-    export finalzip_path=$(ls "$BUILD"/AnyKernel/"$zip_name".zip | tail -n -1)
-    export zip_name
+    export finalzip_path=$(ls /home/vsts/work/1/s/AnyKernel/"$zip_name".zip | tail -n -1)
     export tag="Kernel"
     if [ -e "$finalzip_path" ]; then
         echo "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds"
@@ -75,8 +80,8 @@ Date: $(env TZ="$timezone" date)" "$finalzip_path"
         echo "Uploaded"
 
         /home/vsts/work/1/s/telegram -M "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
-
-Download: ["$zip_name"](https://github.com/"$release_repo"/releases/download/"$tag"/"$zip_name")"
+		
+Download: ["$zip_name".zip](https://github.com/"$release_repo"/releases/download/"$tag"/"$zip_name")"
 
     else
         echo "Build failed in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds"

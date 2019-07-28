@@ -11,8 +11,6 @@ ARCH="arm"
 SUBARCH="arm"
 defconfig="cactus_defconfig"
 export defconfig
-# Set kernel source workspace
-cd $BUILD
 # Export ARCH <arm, arm64, x86, x86_64>
 export ARCH
 # Export SUBARCH <arm, arm64, x86, x86_64>
