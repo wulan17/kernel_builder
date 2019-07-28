@@ -42,12 +42,12 @@ if [ -e android_kernel_xiaomi_mt6765 ]; then
     echo "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
     echo "Build Started"
     /home/vsts/work/1/s/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
-	/home/vsts/work/1/s/telegram -M "<b>Build Start</b>
-<b>Dev</b> : "$KBUILD_BUILD_USER"
-<b>Product</b> : Kernel
-<b>Device</b> : "$device"
-<b>Compiler</b> : "$(${GCC}gcc --version | head -n 1)"
-<b>Date</b> : "$(env TZ="$timezone" date)""
+	/home/vsts/work/1/s/telegram -M "Build Start
+Dev : "$KBUILD_BUILD_USER"
+Product : Kernel
+Device : "$device"
+Compiler : "$(${CROSS_COMPILE}gcc --version | head -n 1)"
+Date : "$(env TZ="$timezone" date)""
 
     BUILD_START=$(date +"%s")
 	# Set kernel source workspace
